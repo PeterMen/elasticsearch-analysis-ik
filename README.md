@@ -4,15 +4,14 @@ IK Analysis for Elasticsearch
 
 说明
 -----
-该分词器时基于github medcl的分词器（https://github.com/medcl/elasticsearch-analysis-ik）改造而来，
+该分词器是基于github medcl的分词器（https://github.com/medcl/elasticsearch-analysis-ik）改造而来，
 改造点如下：
 
-1、改造前，所有索引使用一个词库，没办法针对不同索引添加不同词库，
-改造后，词库的加载由索引中自定义的analyzer配置时，设置的词库而决定
-从而实现了，不同业务的索引使用不同的词库
+1、改造前，所有索引使用相同的字典文件，没办法针对不同索引添加不同词库，
+改造后，字典文件的加载由索引中自定义的tokenizer配置决定，从而实现了不同业务的索引使用不同的词库的效果
 
 2、优化了Dictionary类的代码结构，使得逻辑更清晰，将原来600行的代码缩减到300行，
-优化比较死板的字典加载机制，不再读取IKAnalyzer.cfg.xml，而直接由用户索引analyzer创建时配置
+优化比较死板的字典加载机制，不再读取IKAnalyzer.cfg.xml，而直接由用户索引tokenizer创建时配置
 
 3、优化了Remote Dictionary的加载机制
 
