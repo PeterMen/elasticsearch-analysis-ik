@@ -41,8 +41,6 @@ import java.util.stream.Collectors;
 import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
 import org.wltea.analyzer.dic.DicFile;
 import org.wltea.analyzer.dic.Dictionary;
-import org.wltea.analyzer.dic.RemoteDicMonitor;
-import org.wltea.analyzer.help.ESPluginLoggerFactory;
 
 /**
  * IK分词器 Lucene Tokenizer适配器类
@@ -66,15 +64,11 @@ public final class IKTokenizer extends Tokenizer {
 
    	private PositionIncrementAttribute posIncrAtt;
 
-
-	private static final Logger logger = ESPluginLoggerFactory.getLogger(RemoteDicMonitor.class.getName());
     /**
 	 * Lucene 4.0 Tokenizer适配器类构造函数
      */
 	public IKTokenizer(Configuration configuration){
 	    super();
-		logger.info("--------------创建IK分词器：加载字典名称：--------------------");
-		configuration.getDicFiles().forEach(dicFile -> logger.info(dicFile.getDicName()));
 		offsetAtt = addAttribute(OffsetAttribute.class);
 	    termAtt = addAttribute(CharTermAttribute.class);
 	    typeAtt = addAttribute(TypeAttribute.class);
