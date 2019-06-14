@@ -16,6 +16,7 @@ IK Analysis for Elasticsearch
 3、优化了Remote Dictionary的加载机制
 
 4、去掉了分词器中不必要的synchronized锁，提高了性能
+(tokenizer重用策略是被缓存在ThreadLocal里，所以，不同线程使用的是不同的tokenizer，不会有多线程问题,已测)
 
 5、读取字典文件路径顺序：优先从es的config/analysis-ik/下读取字典文件，
 如未找到，则从plugin下，分词器对应的目录读取
