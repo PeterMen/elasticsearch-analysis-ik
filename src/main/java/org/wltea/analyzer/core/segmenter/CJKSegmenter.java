@@ -80,22 +80,24 @@ public class CJKSegmenter implements ISegmenter {
 			
 			//*********************************
 			//再对当前指针位置的字符进行单字匹配
-			Hit singleCharHit = Dictionary.getSingleton().matchInMainDict(context.getMainDicNames(), context.getSegmentBuff(), context.getCursor(), 1);
-			if(singleCharHit.isMatch()){//首字成词
-				//输出当前的词
-				Lexeme newLexeme = new Lexeme(context.getBufferOffset() , context.getCursor() , 1 , Lexeme.TYPE_CNWORD);
-				context.addLexeme(newLexeme);
+			// 分词器选择的词典文件是该分词器实例化时，configuration里的字典文件列表
+            List<Hit> singleCharHits = Dictionary.getSingleton().matchInMainDict(context.getMainDicNames(), context.getSegmentBuff(), context.getCursor(), 1);
+			for(Hit singleCharHit : singleCharHits){
+                if(singleCharHit.isMatch()){//首字成词
+                    //输出当前的词
+                    Lexeme newLexeme = new Lexeme(context.getBufferOffset() , context.getCursor() , 1 , Lexeme.TYPE_CNWORD);
+                    context.addLexeme(newLexeme);
 
-				//同时也是词前缀
-				if(singleCharHit.isPrefix()){
-					//前缀匹配则放入hit列表
-					this.tmpHits.add(singleCharHit);
-				}
-			}else if(singleCharHit.isPrefix()){//首字为词前缀
-				//前缀匹配则放入hit列表
-				this.tmpHits.add(singleCharHit);
-			}
-			
+                    //同时也是词前缀
+                    if(singleCharHit.isPrefix()){
+                        //前缀匹配则放入hit列表
+                        this.tmpHits.add(singleCharHit);
+                    }
+                }else if(singleCharHit.isPrefix()){//首字为词前缀
+                    //前缀匹配则放入hit列表
+                    this.tmpHits.add(singleCharHit);
+                }
+            }
 
 		}else{
 			//遇到CHAR_USELESS字符

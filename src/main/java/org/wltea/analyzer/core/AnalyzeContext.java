@@ -90,6 +90,8 @@ public class AnalyzeContext {
 		this.mainDicNames = new ArrayList<>();
 		this.quantifierNames = new ArrayList<>();
 		this.stopwordDicFile = new ArrayList<>();
+		// 将定义分词器时的词典文件列表设置到分词器的context中，在分词时，从context中读取词典列表，
+		// 好实现不同IK分词器使用不同词典的逻辑
     	configuration.getDicFiles().forEach(dicFile -> {
     		if(dicFile.getDictType() == DicFile.DictType.INTACT_WORDS){
     			mainDicNames.add(dicFile.getDicName());

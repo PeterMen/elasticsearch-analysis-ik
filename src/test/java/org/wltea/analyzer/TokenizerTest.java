@@ -3,7 +3,9 @@ package org.wltea.analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.elasticsearch.common.settings.Settings;
+import org.junit.Test;
 import org.wltea.analyzer.cfg.Configuration;
+import org.wltea.analyzer.dic.RemoteDicMonitor;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
 import java.io.IOException;
@@ -12,20 +14,22 @@ import java.util.Arrays;
 
 public class TokenizerTest {
 
-    public static void main(String[] args) throws IOException {
+    @Test
+    public void testAnalyzer() throws IOException {
         Settings settings =  Settings.builder()
-                .put("use_smart", true)
+                .put("use_smart", false)
                 .put("enable_lowercase", false)
                 .put("enable_remote_dict", false)
-                .putList("ext_dic_main", Arrays.asList("#dicName$extra#dicPath$extra_test.dic#isRemote$false"))
+                .putList("ext_dic_main", Arrays.asList("http://bztic-unex-da.oss-cn-shanghai.aliyuncs.com/search-es/sit/item-intact.dic?Expires=2201926737&OSSAccessKeyId=LTAIzegOfzOxtprz&Signature=wP9AX7kTX5NXaiYeXWjp/YSOlpI%3D"))
                 .build();
-        Configuration configuration=new Configuration(null,settings).setUseSmart(true);
+        Configuration configuration=new Configuration(null,settings) ;
 
         IKAnalyzer ik =new IKAnalyzer(configuration);
 
 
-        String t = "IK分词器Lucene Analyzer接口实现类 民生银行 我是中国人";
+//        String t = "连身裙";
 //        String t = "分词器";
+        String t = "双肩包";
         TokenStream tokenStream = ik.tokenStream("", new StringReader(t));
         tokenStream.reset();
         CharTermAttribute termAtt  = tokenStream.addAttribute(CharTermAttribute.class);
@@ -34,5 +38,17 @@ public class TokenizerTest {
         }
         tokenStream.end();
         tokenStream.close();
+    }
+
+    @Test
+    public void testRemoteFileLoad(){
+
+        RemoteDicMonitor.RemoteDicFile remoteDicFile = new RemoteDicMonitor.RemoteDicFile("");
+        remoteDicFile.setDicPath("http://bztic-unex-da.oss-cn-shanghai.aliyuncs.com/search-es/sit/item-intact.dic");
+
+        RemoteDicMonitor monitor = new RemoteDicMonitor();
+        System.out.println(monitor.getRemoteWordsUnprivileged(remoteDicFile.getDicPath()));
+
+        monitor.runUnprivileged(remoteDicFile);
     }
 }

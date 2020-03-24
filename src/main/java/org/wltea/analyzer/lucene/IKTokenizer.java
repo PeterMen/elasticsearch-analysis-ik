@@ -26,7 +26,6 @@
  */
 package org.wltea.analyzer.lucene;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
@@ -36,10 +35,7 @@ import org.wltea.analyzer.core.IKSegmenter;
 import org.wltea.analyzer.core.Lexeme;
 
 import java.io.IOException;
-import java.util.stream.Collectors;
-
 import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-import org.wltea.analyzer.dic.DicFile;
 import org.wltea.analyzer.dic.Dictionary;
 
 /**
@@ -64,12 +60,13 @@ public final class IKTokenizer extends Tokenizer {
 
    	private PositionIncrementAttribute posIncrAtt;
 
+
     /**
 	 * Lucene 4.0 Tokenizer适配器类构造函数
      */
 	public IKTokenizer(Configuration configuration){
 	    super();
-		offsetAtt = addAttribute(OffsetAttribute.class);
+	    offsetAtt = addAttribute(OffsetAttribute.class);
 	    termAtt = addAttribute(CharTermAttribute.class);
 	    typeAtt = addAttribute(TypeAttribute.class);
         posIncrAtt = addAttribute(PositionIncrementAttribute.class);

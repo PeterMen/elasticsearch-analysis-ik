@@ -109,7 +109,7 @@ public class Dictionary {
 
 	private void addMonitorTask(DicFile dicFile) {
 		if(pool == null){
-			synchronized (pool){
+			synchronized (Dictionary.class){
 				if(pool == null){
 					// 初始化监控任务
 					initRemoteMoniter();
@@ -242,14 +242,14 @@ public class Dictionary {
 	 * 
 	 * @return Hit 匹配结果描述
 	 */
-	public Hit matchInMainDict(List<String> dicNames, char[] charArray, int begin, int length) {
-		Hit tmpHit = new Hit();
+	public List<Hit> matchInMainDict(List<String> dicNames, char[] charArray, int begin, int length) {
+		ArrayList<Hit> tmpHits = new ArrayList(dicNames.size());
 		for(String dicName : dicNames){
 			// 成词优先级比前缀优先级高
-			tmpHit = singleton._MainDict.get(dicName).match(charArray, begin, length);
-			if(tmpHit.isMatch() || tmpHit.isPrefix()) return tmpHit;
+			Hit tmpHit = singleton._MainDict.get(dicName).match(charArray, begin, length);
+			if(tmpHit.isMatch() || tmpHit.isPrefix()) tmpHits.add(tmpHit);
 		}
-		return tmpHit;
+		return tmpHits;
 	}
 
 	/**

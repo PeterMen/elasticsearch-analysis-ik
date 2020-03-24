@@ -91,21 +91,21 @@ public class RemoteDicMonitor implements Runnable {
 		RequestConfig rc = RequestConfig.custom().setConnectionRequestTimeout(10*1000)
 				.setConnectTimeout(10*1000).setSocketTimeout(15*1000).build();
 
-		HttpHead head = new HttpHead(dicFile.getDicPath());
-		head.setConfig(rc);
+		HttpHead httpHead = new HttpHead(dicFile.getDicPath());
+		httpHead.setConfig(rc);
 
 		//设置请求头
 		if (dicFile.getLast_modified() != null) {
-			head.setHeader("If-Modified-Since", dicFile.getLast_modified());
+			httpHead.setHeader("If-Modified-Since", dicFile.getLast_modified());
 		}
 		if (dicFile.getETags() != null) {
-			head.setHeader("If-None-Match", dicFile.getETags());
+			httpHead.setHeader("If-None-Match", dicFile.getETags());
 		}
 
 		CloseableHttpResponse response = null;
 		try {
 
-			response = httpclient.execute(head);
+			response = httpclient.execute(httpHead);
 
 			//返回200 才做操作
 			if(response.getStatusLine().getStatusCode()==200){
@@ -114,7 +114,8 @@ public class RemoteDicMonitor implements Runnable {
 						||((response.getLastHeader("ETag")!=null) && !response.getLastHeader("ETag").getValue().equalsIgnoreCase(dicFile.eTags))) {
 
 					// 远程词库有更新,需要重新加载词典，并修改last_modified,eTags
-					loadRemoteDic(dicFile);
+					List<String> words = getRemoteWords(dicFile.getDicPath());
+					Dictionary.getSingleton().addWords(dicFile.getDicName(), words);
 					dicFile.setLast_modified(response.getLastHeader("Last-Modified")==null?null:response.getLastHeader("Last-Modified").getValue());
 					dicFile.setETags(response.getLastHeader("ETag")==null?null:response.getLastHeader("ETag").getValue());
 				}
@@ -167,7 +168,7 @@ public class RemoteDicMonitor implements Runnable {
 	/**
 	 * 从远程服务器上下载自定义词条
 	 */
-	private static List<String> getRemoteWordsUnprivileged(String location) {
+	public static List<String> getRemoteWordsUnprivileged(String location) {
 
 		List<String> buffer = new ArrayList<String>();
 		RequestConfig rc = RequestConfig.custom().setConnectionRequestTimeout(10 * 1000).setConnectTimeout(10 * 1000)

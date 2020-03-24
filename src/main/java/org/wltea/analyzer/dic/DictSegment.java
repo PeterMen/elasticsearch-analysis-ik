@@ -120,7 +120,7 @@ class DictSegment implements Comparable<DictSegment>{
 		
 		//引用实例变量为本地变量，避免查询时遇到更新的同步问题
 		DictSegment[] segmentArray = this.childrenArray;
-		Map<Character , DictSegment> segmentMap = this.childrenMap;		
+		Map<Character , DictSegment> segmentMap = this.childrenMap;
 		
 		//STEP1 在节点中查找keyChar对应的DictSegment
 		if(segmentArray != null){
