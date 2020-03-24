@@ -24,6 +24,35 @@ Analyzer: `ik_smart` , `ik_max_word` , Tokenizer: `ik_smart` , `ik_max_word`
 5、读取字典文件路径顺序：优先从es的config/analysis-ik/下读取字典文件，
 如未找到，则从plugin下，分词器对应的目录读取
 
+
+### Dictionary Configuration
+
+`IKAnalyzer.cfg.xml` 配置文件不再使用，所有自定义扩展词库需要在定义分词器时设置，
+例如
+###
+```
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0,
+    "analysis": {
+      "tokenizer": {
+        "my_tokenizer": {
+          "type": "ik_max_word",
+          "ext_dic_main": [
+            "https:xxx.com/sss/ssss.dic",// 该字典是一个远程字典，路径以http或https打头
+            "dddd.dic"// 该词典文件时ES服务器上的本地文件，需要放到IK的config目录下
+          ]
+        }
+      },
+      "analyzer":{
+        "tokenizer":"my_tokenizer",
+        "filer":["lowercase", "my_stemmer"]
+      }
+    }
+  }
+}
+```
 Versions
 --------
 
@@ -170,50 +199,12 @@ Result
     }
 }
 ```
-
-### Dictionary Configuration
-
-`IKAnalyzer.cfg.xml` 配置文件不再使用，所有自定义扩展词库需要在定义分词器时设置，
-例如
-###
-```
-{
-  "settings": {
-    "number_of_shards": 1,
-    "number_of_replicas": 0,
-    "analysis": {
-      "tokenizer": {
-        "my_tokenizer": {
-          "type": "ik_max_word",
-          "ext_dic_main": [
-            "https:xxx.com/sss/ssss.dic",// 该字典是一个远程字典，路径以http或https打头
-            "dddd.dic"// 该词典文件时ES服务器上的本地文件，需要放到IK的config目录下
-          ]
-        }
-      },
-      "analyzer":{
-        "tokenizer":"my_tokenizer",
-        "filer":["lowercase", "my_stemmer"]
-      }
-    }
-  }
-}
-```
-由于ES的setting不支持数组josn对象，所以，采用自定义格式配置字典文件
-dicName:词典名称
-dicPath:词典路径，如果是远程，则为远程路径
-isRemote:true:是远程字典文件，false:是本地文件
-格式说明：#为字段名称开始符，$是值开始符
+ 
 
 
 ### 热更新 IK 分词使用方法
 
-其中 `dicPath` 是指一个 url，比如 `http://yoursite.com/getCustomDict`，该请求只需满足以下两点即可完成分词热更新。
-
-1. 该 http 请求需要返回两个头部(header)，一个是 `Last-Modified`，一个是 `ETag`，这两者都是字符串类型，只要有一个发生变化，该插件就会去抓取新的分词进而更新词库。
-
-2. 该 http 请求返回的内容格式是一行一个分词，换行符用 `\n` 即可。
-
+ 
 满足上面两点要求就可以实现热更新分词了，不需要重启 ES 实例。
 
 可以将需自动更新的热词放在一个 UTF-8 编码的 .txt 文件里，放在 nginx 或其他简易 http server 下，当 .txt 文件修改时，http server 会在客户端请求该文件时自动返回相应的 Last-Modified 和 ETag。可以另外做一个工具来从业务系统提取相关词汇，并更新这个 .txt 文件。
