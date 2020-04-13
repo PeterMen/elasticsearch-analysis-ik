@@ -20,7 +20,7 @@ public class TokenizerTest {
                 .put("use_smart", false)
                 .put("enable_lowercase", false)
                 .put("enable_remote_dict", false)
-                .putList("ext_dic_main", Arrays.asList("http://bztic-unex-da.oss-cn-shanghai.aliyuncs.com/search-es/sit/item-intact.dic?Expires=2201926737&OSSAccessKeyId=LTAIzegOfzOxtprz&Signature=wP9AX7kTX5NXaiYeXWjp/YSOlpI%3D"))
+                .putList("ext_dic_main", Arrays.asList("http://intact.dic"))
                 .build();
         Configuration configuration=new Configuration(null,settings) ;
 
@@ -44,7 +44,7 @@ public class TokenizerTest {
     public void testRemoteFileLoad(){
 
         RemoteDicMonitor.RemoteDicFile remoteDicFile = new RemoteDicMonitor.RemoteDicFile("");
-        remoteDicFile.setDicPath("http://bztic-unex-da.oss-cn-shanghai.aliyuncs.com/search-es/sit/item-intact.dic");
+        remoteDicFile.setDicPath("http://intact.dic");
 
         RemoteDicMonitor monitor = new RemoteDicMonitor();
         System.out.println(monitor.getRemoteWordsUnprivileged(remoteDicFile.getDicPath()));
